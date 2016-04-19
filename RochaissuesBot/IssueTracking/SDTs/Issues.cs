@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace RochaissuesBot.SDTs
+namespace RochaissuesBot.IssueTracking.SDTs
 {
 	public class Issue
 	{

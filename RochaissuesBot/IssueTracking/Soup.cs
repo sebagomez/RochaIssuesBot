@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Bot.Connector;
 
-namespace RochaissuesBot.Actions
+namespace RochaissuesBot.IssueTracking
 {
 	public class Soup : IssueAction
 	{
 		public override Message Execute(Message message)
 		{
-			Message msg = new Message();
+			Message msg = message.CreateReplyMessage();
 			msg.Text = $"**NO SOUP FOR YOU!** {message.From.Name}"; // Text property is Markdown!
 			Attachment att = new Attachment();
 			att.ContentType = "image/png";

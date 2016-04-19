@@ -101,21 +101,28 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IssueTracking\QueryIssueTracking.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="LUIS\LuisManager.cs" />
+    <Compile Include="LUIS\LuisResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SDTs\Issues.cs" />
-    <Compile Include="Actions\IssueAction.cs" />
-    <Compile Include="Actions\IssuesByText.cs" />
+    <Compile Include="IssueTracking\SDTs\Issues.cs" />
+    <Compile Include="IssueTracking\IssueAction.cs" />
+    <Compile Include="IssueTracking\IssuesByText.cs" />
+    <Compile Include="Util\BotConfiguration.cs" />
     <Compile Include="Util\MessageParser.cs" />
-    <Compile Include="Actions\Soup.cs" />
-    <Compile Include="Actions\Unknown.cs" />
+    <Compile Include="IssueTracking\Soup.cs" />
+    <Compile Include="IssueTracking\Unknown.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <None Include="private.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -123,6 +130,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
