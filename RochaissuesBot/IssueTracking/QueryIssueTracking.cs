@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Json;
 using Microsoft.Bot.Connector;
 using RochaissuesBot.IssueTracking.SDTs;
 using RochaissuesBot.LUIS;
+using RochaissuesBot.Util;
 
 namespace RochaissuesBot.IssueTracking
 {
@@ -38,7 +39,7 @@ namespace RochaissuesBot.IssueTracking
 
 		public override Message Execute(Message message)
 		{
-			string url = $"http://localhost/GeneXusIssueTrackingTilo.NetEnvironment/rest/issuesdp?";
+			string url = $"{BotConfiguration.ISSUE_TRACKING}/rest/issuesdp?";
 			if (!string.IsNullOrEmpty(User))
 				url += "UserCode=" + User + "&";
 
@@ -54,6 +55,7 @@ namespace RochaissuesBot.IssueTracking
 			url = url.Substring(0, url.Length - 1); //remove the last '&'
 
 			WebClient wc = new WebClient();
+			wc.Credentials = new NetworkCredential(BotConfiguration.ITUSERNAME, BotConfiguration.ITPASSWORD);
 			Stream response = wc.OpenRead(url);
 			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(IssuesSDT));
 			IssuesSDT sdt = ser.ReadObject(response) as IssuesSDT;
@@ -76,7 +78,7 @@ namespace RochaissuesBot.IssueTracking
 			{
 				foreach (Issue issue in sdt.Issues)
 				{
-					msg.Text += $"[{issue.Issueid}](https://issues.genexus.com/viewissue.aspx?{issue.Issueid}) {issue.Issuetitle}{Environment.NewLine}{Environment.NewLine}";
+					msg.Text += $"[{issue.Issueid}]({BotConfiguration.ISSUE_TRACKING}/viewissue.aspx?{issue.Issueid}) {issue.Issuetitle}{Environment.NewLine}{Environment.NewLine}";
 				}
 
 				return msg;

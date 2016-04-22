@@ -2,8 +2,10 @@
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Json;
+using System.Text;
 using Microsoft.Bot.Connector;
 using RochaissuesBot.IssueTracking.SDTs;
+using RochaissuesBot.Util;
 
 namespace RochaissuesBot.IssueTracking
 {
@@ -11,37 +13,43 @@ namespace RochaissuesBot.IssueTracking
 	{
 		public override Message Execute(Message message)
 		{
-			string url = $"http://localhost/GeneXusIssueTrackingTilo.NetEnvironment/rest/issuesbytext";
+			string url = $"{BotConfiguration.ISSUE_TRACKING}/rest/issuesbytext";
 			WebClient wc = new WebClient();
 			wc.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+			wc.Credentials = new NetworkCredential(BotConfiguration.ITUSERNAME, BotConfiguration.ITPASSWORD);
+			string response = wc.UploadString(url,"POST", "{\"SearchWords\":\"" + message.Text + "\"}");
 
-			string response = wc.UploadString(url, "{\"SearchWords\":\""+ message.Text +"\"}");
-
-			//DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(IssuesSDT));
+			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(SearchResult));
+			SearchResult result = null;
+			byte[] bytes = Encoding.UTF8.GetBytes(response);
+			using (var stream = new MemoryStream(bytes))
+				result = ser.ReadObject(stream) as SearchResult;
 
 			Message msg = message.CreateReplyMessage();
-			//if (sdt.Error && !string.IsNullOrEmpty(sdt.Message))
-			//{
-			//	msg.Text = sdt.Message;
-			//	return msg;
-			//}
+			int count = int.Parse(result.GXSearchResults.DocumentsCount);
+			if (count == 0)
+			{
+				msg.Text = "I'm sorry, I couldn't find anything with that description";
+				return msg;
+			}
 
 
-			//if (sdt.Issues.Count > 50)
-			//{
-			//	msg.Text = $"I've found waaay too many issues ({sdt.Issues.Count}), please redifine your search";
-			//	return msg;
-			//}
+			if (count > 100)
+			{
+				msg.Text = $"I've found waaay too many issues ({count}), please redifine your search";
+				return msg;
+			}
 
-			//if (sdt.Issues.Count > 0)
-			//{
-			//	foreach (Issue issue in sdt.Issues)
-			//	{
-			//		msg.Text += $"[{issue.Issueid}](https://issues.genexus.com/viewissue.aspx?{issue.Issueid}) {issue.Issuetitle}{Environment.NewLine}{Environment.NewLine}";
-			//	}
+			if (count > 0)
+			{
+				foreach (var doc in result.GXSearchResults.Documents)
+				{
+					int id = int.Parse(doc.Id.Substring(doc.Id.LastIndexOf('?') + 1));
+					msg.Text += $"[{id}]({doc.Id}) {doc.Description}{Environment.NewLine}{Environment.NewLine}";
+				}
 
-			//	return msg;
-			//}
+				return msg;
+			}
 
 			return base.Execute(message);
 		}

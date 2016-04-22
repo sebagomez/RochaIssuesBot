@@ -107,6 +107,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="IssueTracking\SDTs\SearchResult.cs" />
     <Compile Include="LUIS\LuisManager.cs" />
     <Compile Include="LUIS\LuisResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

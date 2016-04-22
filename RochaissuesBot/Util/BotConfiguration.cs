@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using System.Web.Configuration;
+﻿using System.Configuration;
 
 namespace RochaissuesBot.Util
 {
@@ -11,5 +6,9 @@ namespace RochaissuesBot.Util
 	{
 		public static string LUIS_KEY { get; } = ConfigurationManager.AppSettings["LuisKey"];
 		public static string LUIS_SUBSCRIPTION { get; } = ConfigurationManager.AppSettings["LuisSubscription"];
+		public static string ISSUE_TRACKING { get; } = ConfigurationManager.AppSettings["IssueTrackingLocation"];
+		public static string SOUP_NAZI { get; } = ConfigurationManager.AppSettings["SoupNaziLocation"];
+		public static string ITUSERNAME { get; } = ConfigurationManager.AppSettings["IssueTrackingUserName"];
+		public static string ITPASSWORD { get; } = ConfigurationManager.AppSettings["IssueTrackingPassword"];
 	}
 }
