@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace RochaissuesBot.Util
+namespace GXIssueTrackingBot.Util
 {
 	public class BotConfiguration
 	{

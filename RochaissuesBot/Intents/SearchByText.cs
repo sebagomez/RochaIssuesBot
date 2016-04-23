@@ -3,21 +3,22 @@ using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using GXIssueTrackingBot.IssueTracking.SDTs;
+using GXIssueTrackingBot.Util;
 using Microsoft.Bot.Connector;
-using RochaissuesBot.IssueTracking.SDTs;
-using RochaissuesBot.Util;
 
-namespace RochaissuesBot.IssueTracking
+namespace GXIssueTrackingBot.Intents
 {
-	public class IssuesByText : IssueAction
+	public class SearchByText : BaseIntent
 	{
 		public override Message Execute(Message message)
 		{
+			string messageText = Fixer.Sanitize(message.Text);
 			string url = $"{BotConfiguration.ISSUE_TRACKING}/rest/issuesbytext";
 			WebClient wc = new WebClient();
 			wc.Headers.Add(HttpRequestHeader.ContentType, "application/json");
 			wc.Credentials = new NetworkCredential(BotConfiguration.ITUSERNAME, BotConfiguration.ITPASSWORD);
-			string response = wc.UploadString(url,"POST", "{\"SearchWords\":\"" + message.Text + "\"}");
+			string response = wc.UploadString(url,"POST", "{\"SearchWords\":\"" + messageText + "\"}");
 
 			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(SearchResult));
 			SearchResult result = null;
@@ -29,10 +30,9 @@ namespace RochaissuesBot.IssueTracking
 			int count = int.Parse(result.GXSearchResults.DocumentsCount);
 			if (count == 0)
 			{
-				msg.Text = "I'm sorry, I couldn't find anything with that description";
+				msg.Text = $"I'm sorry {message.From.Name}, I couldn't find anything with that description";
 				return msg;
 			}
-
 
 			if (count > 100)
 			{

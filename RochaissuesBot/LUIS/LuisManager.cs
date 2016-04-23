@@ -6,9 +6,9 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Web;
 using Microsoft.Bot.Connector;
-using RochaissuesBot.Util;
+using GXIssueTrackingBot.Util;
 
-namespace RochaissuesBot.LUIS
+namespace GXIssueTrackingBot.LUIS
 {
 	public class LuisManager
 	{

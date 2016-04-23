@@ -3,20 +3,20 @@ using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using Microsoft.Bot.Connector;
-using RochaissuesBot.IssueTracking.SDTs;
-using RochaissuesBot.LUIS;
-using RochaissuesBot.Util;
+using GXIssueTrackingBot.IssueTracking.SDTs;
+using GXIssueTrackingBot.LUIS;
+using GXIssueTrackingBot.Util;
 
-namespace RochaissuesBot.IssueTracking
+namespace GXIssueTrackingBot.Intents
 {
-	public class QueryIssueTracking : IssueAction
+	public class ShowIssues : BaseIntent
 	{
 		public string User { get; set; }
 		public string Project { get; set; }
 		public string Status{ get; set; }
 		public string Type { get; set; }
 
-		public QueryIssueTracking(LuisResponse luis)
+		public ShowIssues(LuisResponse luis)
 		{
 			foreach (var entity in luis.entities)
 			{

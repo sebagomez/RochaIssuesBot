@@ -8,9 +8,9 @@ using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Connector.Utilities;
 using Newtonsoft.Json;
-using RochaissuesBot.Util;
+using GXIssueTrackingBot.Util;
 
-namespace RochaissuesBot
+namespace GXIssueTrackingBot
 {
 	[BotAuthentication]
 	public class MessagesController : ApiController

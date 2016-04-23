@@ -1,37 +1,40 @@
-﻿using Microsoft.Bot.Connector;
-using RochaissuesBot.IssueTracking;
-using RochaissuesBot.LUIS;
+﻿using GXIssueTrackingBot.Intents;
+using GXIssueTrackingBot.LUIS;
+using Microsoft.Bot.Connector;
 
-namespace RochaissuesBot.Util
+namespace GXIssueTrackingBot.Util
 {
 	public class MessageParser
 	{
 		//https://channel9.msdn.com/Events/Build/2016/B821
-		public static Message Parse(Message msg)
+		public static Message Parse(Message message)
 		{
-			IssueAction act;
+			if (message.Text.StartsWith(":") && message.Text.EndsWith(":") && message.Text.IndexOf(' ') == -1) //it's an emoji
+				return message.CreateReplyMessage($"{message.Text} to you too {message.From.Name}");
+
+			BaseIntent intent;
 			//I need to use natural language recognition here with LUIS.ai
 			//NuGet Micrsoft.Bot.Builder must be used for form completition, like where the pizza must go to, or how large, or toppins
-			LuisResponse luis = LuisManager.Parse(msg);
-			Intent intent = luis.intents[0];
+			LuisResponse luis = LuisManager.Parse(message);
+			Intent luisIntent = luis.intents[0];
 
-			switch (intent.intent)
+			switch (luisIntent.intent)
 			{
 				case "Soup":
-					act = new Soup();
+					intent = new Soup();
 					break;
 				case "ShowIssues":
-					act = new QueryIssueTracking(luis);
+					intent = new ShowIssues(luis);
 					break;
 				case "SearchByText":
-					act = new IssuesByText();
+					intent = new SearchByText();
 					break;
 				default:
-					act = new Unknown();
+					intent = new None();
 					break;
 			}
 
-			return act.Execute(msg);
+			return intent.Execute(message);
 		}
 	}
 }

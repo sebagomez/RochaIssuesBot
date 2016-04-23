@@ -1,8 +1,8 @@
 ﻿using Microsoft.Bot.Connector;
 
-namespace RochaissuesBot.IssueTracking
+namespace GXIssueTrackingBot.Intents
 {
-	public abstract class IssueAction
+	public abstract class BaseIntent
 	{
 		public virtual Message Execute(Message message)
 		{

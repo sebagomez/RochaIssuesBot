@@ -1,5 +1,7 @@
 packages/
+PublishProfiles/
 RochaissuesBot/private.config
 .vs/
 bin/
 obj/
+*.user

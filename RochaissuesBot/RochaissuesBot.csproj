@@ -11,8 +11,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RochaissuesBot</RootNamespace>
-    <AssemblyName>RochaissuesBot</AssemblyName>
+    <RootNamespace>GXIssueTrackingBot</RootNamespace>
+    <AssemblyName>GXIssueTrackingBot</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -101,7 +101,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IssueTracking\QueryIssueTracking.cs" />
+    <Compile Include="Intents\ShowIssues.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -112,18 +112,21 @@
     <Compile Include="LUIS\LuisResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IssueTracking\SDTs\Issues.cs" />
-    <Compile Include="IssueTracking\IssueAction.cs" />
-    <Compile Include="IssueTracking\IssuesByText.cs" />
+    <Compile Include="Intents\BaseIntent.cs" />
+    <Compile Include="Intents\SearchByText.cs" />
     <Compile Include="Util\BotConfiguration.cs" />
+    <Compile Include="Util\Fixer.cs" />
     <Compile Include="Util\MessageParser.cs" />
-    <Compile Include="IssueTracking\Soup.cs" />
-    <Compile Include="IssueTracking\Unknown.cs" />
+    <Compile Include="Intents\Soup.cs" />
+    <Compile Include="Intents\None.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="private.config">
+    <Content Include="private.config">
       <SubType>Designer</SubType>
-    </None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Properties\PublishProfiles\Genexusissuetrackingbot - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

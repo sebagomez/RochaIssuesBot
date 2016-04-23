@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Bot.Connector;
-using RochaissuesBot.Util;
+using GXIssueTrackingBot.Util;
 
-namespace RochaissuesBot.IssueTracking
+namespace GXIssueTrackingBot.Intents
 {
-	public class Soup : IssueAction
+	public class Soup : BaseIntent
 	{
 		public override Message Execute(Message message)
 		{
