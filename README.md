@@ -1,4 +1,4 @@
-![Genexus Bender](\res\GenexusBender.png)
+![Genexus Bender](.\res\GenexusBender.png)
 Genexus Issue Tracking Bot
 ==========================
 
