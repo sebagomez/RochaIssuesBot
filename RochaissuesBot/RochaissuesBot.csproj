@@ -98,7 +98,6 @@
   <ItemGroup>
     <Content Include="default.aspx" />
     <Content Include="default.css" />
-    <Content Include="default.htm" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
   </ItemGroup>
