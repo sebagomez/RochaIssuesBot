@@ -9,8 +9,9 @@ namespace GXIssueTrackingBot.Util
 		//https://channel9.msdn.com/Events/Build/2016/B821
 		public static Message Parse(Message message)
 		{
-			if (message.Text.StartsWith(":") && message.Text.EndsWith(":") && message.Text.IndexOf(' ') == -1) //it's an emoji
-				return message.CreateReplyMessage($"{message.Text} to you too {message.From.Name}");
+			string messageText = message.Text.Trim();
+			if (messageText.StartsWith(":") && messageText.EndsWith(":") && messageText.IndexOf(' ') == -1) //it's an emoji
+				return message.CreateReplyMessage($"{messageText} to you too {message.From.Name}");
 
 			BaseIntent intent;
 			//I need to use natural language recognition here with LUIS.ai
