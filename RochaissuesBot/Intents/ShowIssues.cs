@@ -74,7 +74,7 @@ namespace GXIssueTrackingBot.Intents
 
 			if (sdt.Issues.Count > 100)
 			{
-				msg.Text = $"I've found waaay too many issues ({sdt.Issues.Count}), please redifine your search";
+				msg.Text = $"I've found waaay too many issues ({sdt.Issues.Count}), please refine your search";
 				return msg;
 			}
 
