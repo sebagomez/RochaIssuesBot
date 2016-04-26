@@ -1,5 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/fxjw0400dm2y5gcs?svg=true)](https://ci.appveyor.com/project/sebagomez/rochaissuesbot)
-
+[![Build status](https://ci.appveyor.com/api/projects/status/8gfs2jgf3ec334r4?svg=true)](https://ci.appveyor.com/project/sebagomez/rochaissuesbot)
 ![Genexus Bender](./res/GenexusBender.png)
 Genexus Issue Tracking Bot
 ==========================
