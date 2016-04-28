@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace GXIssueTrackingBot.IssueTracking.SDTs
 {
@@ -34,6 +31,7 @@ namespace GXIssueTrackingBot.IssueTracking.SDTs
 	public class IssuesSDT
 	{
 		public List<Issue> Issues { get; set; }
+		public int Count { get; set; }
 		public bool Error { get; set; }
 		public string Message { get; set; }
 	}

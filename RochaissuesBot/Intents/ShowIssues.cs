@@ -6,6 +6,7 @@ using Microsoft.Bot.Connector;
 using GXIssueTrackingBot.IssueTracking.SDTs;
 using GXIssueTrackingBot.LUIS;
 using GXIssueTrackingBot.Util;
+using System.Text;
 
 namespace GXIssueTrackingBot.Intents
 {
@@ -15,11 +16,13 @@ namespace GXIssueTrackingBot.Intents
 		const string PROJECT_CODE = "ProjectCode";
 		const string STATUS = "Status";
 		const string TYPE = "Type";
+		const string CATEGORY = "Category";
 
 		public string User { get; set; }
 		public string Project { get; set; }
 		public string Status { get; set; }
 		public string Type { get; set; }
+		public string Category { get; set; }
 
 		public ShowIssues(LuisResponse luis)
 		{
@@ -35,6 +38,12 @@ namespace GXIssueTrackingBot.Intents
 						break;
 					case "status":
 						Status = entity.entity;
+						break;
+					case "type":
+						Type = entity.entity;
+						break;
+					case "category":
+						Category = entity.entity;
 						break;
 					default:
 						break;
@@ -58,6 +67,9 @@ namespace GXIssueTrackingBot.Intents
 			if (!string.IsNullOrEmpty(Type))
 				url += $"{TYPE}={Type}&";
 
+			if (!string.IsNullOrEmpty(Category))
+				url += $"{CATEGORY}={Category}&";
+
 			url = url.Substring(0, url.Length - 1); //remove the last '&'
 
 			WebClient wc = new WebClient();
@@ -80,14 +92,26 @@ namespace GXIssueTrackingBot.Intents
 
 			if (sdt.Issues.Count > 0)
 			{
-				msg.Text = $"I've found {sdt.Issues.Count} issues ";
-				if (!string.IsNullOrEmpty(Status))
-					msg.Text += $" {Status.ToLower()} ";
-				if (!string.IsNullOrEmpty(Project))
-					msg.Text += $"in {Project} ";
-				if (!string.IsNullOrEmpty(User))
-					msg.Text += $"assigned to {User}";
+				StringBuilder builder = new StringBuilder($"I've found {sdt.Issues.Count} ");
 
+				if (!string.IsNullOrEmpty(Status))
+					builder.Append($"{Status} ");
+
+				builder.Append("issues ");
+
+				if (!string.IsNullOrEmpty(Type))
+					builder.Append($"({Type})");
+
+				if (!string.IsNullOrEmpty(Status))
+					builder.Append($" {Status.ToLower()} ");
+				if (!string.IsNullOrEmpty(Project))
+					builder.Append($"in {Project} ");
+				if (!string.IsNullOrEmpty(User))
+					builder.Append($"assigned to {User} ");
+				if (!string.IsNullOrEmpty(Category))
+					builder.Append($"with category '{Category}'");
+
+				msg.Text = builder.ToString();
 				msg.Text += $"{Environment.NewLine}{Environment.NewLine}";
 
 				foreach (Issue issue in sdt.Issues)
@@ -108,6 +132,7 @@ namespace GXIssueTrackingBot.Intents
 			string project = message.GetBotUserData<string>(PROJECT_CODE);
 			string status = message.GetBotUserData<string>(STATUS);
 			string type = message.GetBotUserData<string>(TYPE);
+			string category = message.GetBotUserData<string>(CATEGORY);
 
 			if (IsSingleParameter)
 			{
@@ -119,12 +144,15 @@ namespace GXIssueTrackingBot.Intents
 					Status = status;
 				if (string.IsNullOrEmpty(Type) && !string.IsNullOrEmpty(type))
 					Type = type;
+				if (string.IsNullOrEmpty(Category) && !string.IsNullOrEmpty(category))
+					Category = category;
 			}
 
 			msg.SetBotUserData(USER_CODE, User);
 			msg.SetBotUserData(PROJECT_CODE, Project);
 			msg.SetBotUserData(STATUS, Status);
 			msg.SetBotUserData(TYPE, Type);
+			msg.SetBotUserData(CATEGORY, Category);
 
 			return msg;
 		}
@@ -133,10 +161,11 @@ namespace GXIssueTrackingBot.Intents
 		{
 			get
 			{
-				return string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && !string.IsNullOrEmpty(Type) ||
-					string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && !string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type) ||
-					string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type) ||
-					!string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type);
+				return string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type) && !string.IsNullOrEmpty(Category) ||
+					string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && !string.IsNullOrEmpty(Type) && string.IsNullOrEmpty(Category) ||
+					string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && !string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type) && string.IsNullOrEmpty(Category) ||
+					string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type) && string.IsNullOrEmpty(Category) ||
+					!string.IsNullOrEmpty(User) && string.IsNullOrEmpty(Project) && string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Type) && string.IsNullOrEmpty(Category);
 			}
 		}
 	}

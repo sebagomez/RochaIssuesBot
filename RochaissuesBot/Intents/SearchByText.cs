@@ -18,7 +18,17 @@ namespace GXIssueTrackingBot.Intents
 			WebClient wc = new WebClient();
 			wc.Headers.Add(HttpRequestHeader.ContentType, "application/json");
 			wc.Credentials = new NetworkCredential(BotConfiguration.ITUSERNAME, BotConfiguration.ITPASSWORD);
-			string response = wc.UploadString(url,"POST", "{\"SearchWords\":\"" + messageText + "\"}");
+			string response = "";
+			Message msg = message.CreateReplyMessage();
+			try
+			{
+				response = wc.UploadString(url, "POST", "{\"SearchWords\":\"" + messageText + "\"}");
+			}
+			catch (WebException wex)
+			{
+				msg.Text = $"Ooops! Genexus issue tracking returned an error. _{wex.Message}_"; ;
+				return msg;
+			}
 
 			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(SearchResult));
 			SearchResult result = null;
@@ -26,7 +36,6 @@ namespace GXIssueTrackingBot.Intents
 			using (var stream = new MemoryStream(bytes))
 				result = ser.ReadObject(stream) as SearchResult;
 
-			Message msg = message.CreateReplyMessage();
 			int count = int.Parse(result.GXSearchResults.DocumentsCount);
 			if (count == 0)
 			{

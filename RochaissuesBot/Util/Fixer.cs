@@ -1,15 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace GXIssueTrackingBot.Util
 {
 	public class Fixer
 	{
+		static Dictionary<string, string> replaceableChars = new Dictionary<string, string>()
+		{
+			{ ":","" },
+			{"á","a" },
+			{"é","e" },
+			{"í","i" },
+			{"ó","o" },
+			{"ú","u" },
+		};
+
 		public static string Sanitize(string message)
 		{
-			return message.Replace(":", "");
+			foreach (var item in replaceableChars)
+				message = message.Replace(item.Key, item.Value);
+
+			return message;
 		}
 	}
 }
