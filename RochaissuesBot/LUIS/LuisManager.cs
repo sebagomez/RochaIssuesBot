@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Json;
-using System.Web;
-using Microsoft.Bot.Connector;
 using GXIssueTrackingBot.Util;
+using Microsoft.Bot.Connector;
 
 namespace GXIssueTrackingBot.LUIS
 {

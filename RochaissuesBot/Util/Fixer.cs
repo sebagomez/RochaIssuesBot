@@ -7,6 +7,7 @@ namespace GXIssueTrackingBot.Util
 		static Dictionary<string, string> replaceableChars = new Dictionary<string, string>()
 		{
 			{ ":","" },
+			{ "-","" },
 			{"á","a" },
 			{"é","e" },
 			{"í","i" },

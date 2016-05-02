@@ -1,5 +1,9 @@
-﻿using GXIssueTrackingBot.Intents;
+﻿using System.Threading.Tasks;
+using GXIssueTrackingBot.Intents;
+using GXIssueTrackingBot.Intents.Command;
 using GXIssueTrackingBot.LUIS;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.FormFlow;
 using Microsoft.Bot.Connector;
 
 namespace GXIssueTrackingBot.Util
@@ -7,15 +11,44 @@ namespace GXIssueTrackingBot.Util
 	public class MessageParser
 	{
 		//https://channel9.msdn.com/Events/Build/2016/B821
-		public static Message Parse(Message message)
+		public static async Task<Message> Parse(Message message)
 		{
+			if (message.GetBotConversationData<bool>(SearchCommand.KEY))
+				return await Conversation.SendAsync(message, MakeSearchRoot);
+
+			if (message.GetBotConversationData<bool>(ListCommand.KEY))
+				return await Conversation.SendAsync(message, MakeListRoot);
+
 			string messageText = message.Text.Trim();
 			if (messageText.StartsWith(":") && messageText.EndsWith(":") && messageText.IndexOf(' ') == -1) //it's an emoji
 				return message.CreateReplyMessage($"{messageText} to you too {message.From.Name}");
 
-			BaseIntent intent;
+			BaseIntent intent = null;
+			if (messageText.StartsWith("/")) // it's a command
+			{
+				string command = messageText.Substring(1).Trim().ToLower();
+				switch (command)
+				{
+					case "clear":
+						intent = new ClearCommand();
+						break;
+					case "list":
+					case "show":
+						message.SetBotConversationData(ListCommand.KEY, true);
+						return await Conversation.SendAsync(message, MakeListRoot);
+					case "search":
+					case "find":
+						message.SetBotConversationData(SearchCommand.KEY, true);
+						return await Conversation.SendAsync(message, MakeSearchRoot);
+					default:
+						break;
+				}
+
+				if (intent != null)
+					return intent.Execute(message);
+			}
+			
 			//I need to use natural language recognition here with LUIS.ai
-			//NuGet Micrsoft.Bot.Builder must be used for form completition, like where the pizza must go to, or how large, or toppins
 			LuisResponse luis = LuisManager.Parse(message);
 			Intent luisIntent = luis.intents[0];
 
@@ -36,6 +69,16 @@ namespace GXIssueTrackingBot.Util
 			}
 
 			return intent.Execute(message);
+		}
+
+		internal static IFormDialog<SearchCommand> MakeSearchRoot()
+		{
+			return FormDialog.FromForm(SearchCommand.MakeForm);
+		}
+
+		internal static IFormDialog<ListCommand> MakeListRoot()
+		{
+			return FormDialog.FromForm(ListCommand.MakeForm);
 		}
 	}
 }

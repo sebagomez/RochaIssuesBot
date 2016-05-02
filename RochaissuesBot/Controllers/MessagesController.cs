@@ -30,9 +30,7 @@ namespace GXIssueTrackingBot
 				if (message.Text.ToLower().Trim() == "hello")
 					return message.CreateReplyMessage($"Hello to you too {message.From.Name}! What's up!");
 
-				return MessageParser.Parse(message);
-
-				//return message.CreateReplyMessage($"I'm sorry {message.From.Name}, hello is all I know (for now)");
+				return await MessageParser.Parse(message);
 			}
 			else
 			{
@@ -42,11 +40,11 @@ namespace GXIssueTrackingBot
 
 		private Message HandleSystemMessage(Message message)
 		{
+			Message reply = null;
 			if (message.Type == "Ping")
 			{
-				Message reply = message.CreateReplyMessage();
+				reply = message.CreateReplyMessage();
 				reply.Type = "Ping";
-				return reply;
 			}
 			else if (message.Type == "DeleteUserData")
 			{
@@ -55,6 +53,8 @@ namespace GXIssueTrackingBot
 			}
 			else if (message.Type == "BotAddedToConversation")
 			{
+				reply = message.CreateReplyMessage();
+				reply.Text = $"Welcome {message.From.Name}";
 			}
 			else if (message.Type == "BotRemovedFromConversation")
 			{
@@ -69,7 +69,7 @@ namespace GXIssueTrackingBot
 			{
 			}
 
-			return null;
+			return reply;
 		}
 	}
 }
