@@ -17,6 +17,9 @@ namespace GXIssueTrackingBot.Util
 
 		public static string Sanitize(string message)
 		{
+			if (message.ToLower().StartsWith("re:"))
+				message = message.Substring(3);
+
 			foreach (var item in replaceableChars)
 				message = message.Replace(item.Key, item.Value);
 
