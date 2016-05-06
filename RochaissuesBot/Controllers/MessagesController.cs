@@ -9,6 +9,7 @@ using Microsoft.Bot.Connector;
 using Microsoft.Bot.Connector.Utilities;
 using Newtonsoft.Json;
 using GXIssueTrackingBot.Util;
+using GXIssueTrackingBot.Intents.Command;
 
 namespace GXIssueTrackingBot
 {
@@ -53,8 +54,9 @@ namespace GXIssueTrackingBot
 			}
 			else if (message.Type == "BotAddedToConversation")
 			{
-				reply = message.CreateReplyMessage();
-				reply.Text = $"Welcome {message.From.Name}";
+				HelpCommand cmd = new HelpCommand();
+				return cmd.Execute(message);
+				
 			}
 			else if (message.Type == "BotRemovedFromConversation")
 			{

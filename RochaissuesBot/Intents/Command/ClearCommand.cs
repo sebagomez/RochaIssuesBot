@@ -14,6 +14,7 @@ namespace GXIssueTrackingBot.Intents.Command
 			msg.SetBotUserData(CATEGORY, null);
 
 			message.SetBotConversationData(SearchCommand.KEY, false);
+			message.SetBotConversationData(ListCommand.KEY, false);
 
 			return msg;
 		}

@@ -13,6 +13,12 @@ namespace GXIssueTrackingBot.Util
 		//https://channel9.msdn.com/Events/Build/2016/B821
 		public static async Task<Message> Parse(Message message)
 		{
+			if (message.Text.ToLower().Trim() == "/help")
+			{
+				HelpCommand help = new HelpCommand();
+				return help.Execute(message);
+			}
+
 			if (message.GetBotConversationData<bool>(SearchCommand.KEY))
 				return await Conversation.SendAsync(message, MakeSearchRoot);
 
@@ -29,6 +35,9 @@ namespace GXIssueTrackingBot.Util
 				string command = messageText.Substring(1).Trim().ToLower();
 				switch (command)
 				{
+					case "help": //it should get here, but just in case
+						intent = new HelpCommand();
+						break;
 					case "clear":
 						intent = new ClearCommand();
 						break;

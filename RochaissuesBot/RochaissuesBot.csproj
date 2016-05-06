@@ -121,6 +121,7 @@
       <DependentUpon>default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Intents\Command\ClearCommand.cs" />
+    <Compile Include="Intents\Command\HelpCommand.cs" />
     <Compile Include="Intents\Command\ListCommand.cs" />
     <Compile Include="Intents\Command\SearchCommand.cs" />
     <Compile Include="Intents\ShowIssues.cs" />
