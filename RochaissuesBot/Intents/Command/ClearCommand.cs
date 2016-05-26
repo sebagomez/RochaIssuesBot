@@ -13,8 +13,8 @@ namespace GXIssueTrackingBot.Intents.Command
 			msg.SetBotUserData(TYPE, null);
 			msg.SetBotUserData(CATEGORY, null);
 
-			message.SetBotConversationData(SearchCommand.KEY, false);
-			message.SetBotConversationData(ListCommand.KEY, false);
+			msg.SetBotUserData(SearchCommand.KEY, false);
+			msg.SetBotUserData(ListCommand.KEY, false);
 
 			return msg;
 		}

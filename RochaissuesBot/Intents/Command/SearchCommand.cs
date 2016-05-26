@@ -18,7 +18,7 @@ namespace GXIssueTrackingBot.Intents.Command
 		{
 			OnCompletionAsyncDelegate<SearchCommand> goSearch = async (context, search) =>
 			{
-				context.ConversationData.SetValue<bool>(KEY, false);
+				context.UserData.SetValue<bool>(KEY, false);
 				await context.PostAsync(IssuesByText.Search(search.Text));
 			};
 

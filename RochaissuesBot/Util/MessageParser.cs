@@ -18,11 +18,16 @@ namespace GXIssueTrackingBot.Util
 				HelpCommand help = new HelpCommand();
 				return help.Execute(message);
 			}
+			if (message.Text.ToLower().Trim() == "/clear")
+			{
+				ClearCommand clr = new ClearCommand();
+				return clr.Execute(message);
+			}
 
-			if (message.GetBotConversationData<bool>(SearchCommand.KEY))
+			if (message.GetBotUserData<bool>(SearchCommand.KEY))
 				return await Conversation.SendAsync(message, MakeSearchRoot);
 
-			if (message.GetBotConversationData<bool>(ListCommand.KEY))
+			if (message.GetBotUserData<bool>(ListCommand.KEY))
 				return await Conversation.SendAsync(message, MakeListRoot);
 
 			string messageText = message.Text.Trim();

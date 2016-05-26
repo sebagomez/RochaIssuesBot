@@ -26,7 +26,7 @@ namespace GXIssueTrackingBot.IssueTracking
 			if (!string.IsNullOrEmpty(type))
 				url += $"{BaseIntent.TYPE}={type}&";
 
-			if (!string.IsNullOrEmpty(category))
+			//if (!string.IsNullOrEmpty(category)) //right now (26/05/2016) there's an issue with null parameters in rest services
 				url += $"{BaseIntent.CATEGORY}={category}&";
 
 			url = url.Substring(0, url.Length - 1); //remove the last '&'
@@ -51,33 +51,22 @@ namespace GXIssueTrackingBot.IssueTracking
 			IssuesSDT sdt = ser.ReadObject(response) as IssuesSDT;
 
 			StringBuilder builder = new StringBuilder();
+			string queryString = SearchedText(status, type, project, user, category);
 
-			if (sdt.Error && !string.IsNullOrEmpty(sdt.Message))
-				builder.Append(sdt.Message);
+			if (sdt.Error)
+			{
+				builder.Append($"I'm sorry. I could not find any {queryString}");
+
+				if (!string.IsNullOrEmpty(sdt.Message))
+					builder.Append($"The server said _{sdt.Message}_");
+			}
 
 			if (sdt.Issues.Count > 100)
 				builder.Append($"I've found waaay too many issues ({sdt.Issues.Count}), please refine your search");
 
 			if (sdt.Issues.Count > 0 && sdt.Issues.Count <= 100)
 			{
-				builder.Append($"I've found {sdt.Issues.Count} ");
-
-				if (!string.IsNullOrEmpty(status))
-					builder.Append($"{status} ");
-
-				builder.Append("issues ");
-
-				if (!string.IsNullOrEmpty(type))
-					builder.Append($"({type})");
-
-				if (!string.IsNullOrEmpty(status))
-					builder.Append($" {status.ToLower()} ");
-				if (!string.IsNullOrEmpty(project))
-					builder.Append($"in {project} ");
-				if (!string.IsNullOrEmpty(user))
-					builder.Append($"assigned to {user} ");
-				if (!string.IsNullOrEmpty(category))
-					builder.Append($"with category '{category}'");
+				builder.Append($"I've found {sdt.Issues.Count} {queryString}");
 
 				builder.Append($"{Environment.NewLine}{Environment.NewLine}");
 
@@ -86,6 +75,27 @@ namespace GXIssueTrackingBot.IssueTracking
 					builder.Append($"[{issue.Issueid}]({BotConfiguration.ISSUE_TRACKING}/viewissue.aspx?{issue.Issueid}) {issue.Issuetitle}{Environment.NewLine}{Environment.NewLine}");
 				}
 			}
+
+			return builder.ToString();
+		}
+
+		static string SearchedText(string status, string type, string project, string user, string category)
+		{
+			StringBuilder builder = new StringBuilder();
+			if (!string.IsNullOrEmpty(status))
+				builder.Append($"{status} ");
+
+			builder.Append("issues ");
+
+			if (!string.IsNullOrEmpty(type))
+				builder.Append($"({type})");
+
+			if (!string.IsNullOrEmpty(project))
+				builder.Append($"in {project} ");
+			if (!string.IsNullOrEmpty(user))
+				builder.Append($"assigned to {user} ");
+			if (!string.IsNullOrEmpty(category))
+				builder.Append($"with category '{category}'");
 
 			return builder.ToString();
 		}
