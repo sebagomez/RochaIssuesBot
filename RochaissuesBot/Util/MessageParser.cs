@@ -48,11 +48,11 @@ namespace GXIssueTrackingBot.Util
 						break;
 					case "list":
 					case "show":
-						message.SetBotConversationData(ListCommand.KEY, true);
+						message.SetBotUserData(ListCommand.KEY, true);
 						return await Conversation.SendAsync(message, MakeListRoot);
 					case "search":
 					case "find":
-						message.SetBotConversationData(SearchCommand.KEY, true);
+						message.SetBotUserData(SearchCommand.KEY, true);
 						return await Conversation.SendAsync(message, MakeSearchRoot);
 					default:
 						break;
@@ -61,7 +61,7 @@ namespace GXIssueTrackingBot.Util
 				if (intent != null)
 					return intent.Execute(message);
 			}
-			
+
 			//I need to use natural language recognition here with LUIS.ai
 			LuisResponse luis = LuisManager.Parse(message);
 			Intent luisIntent = luis.intents[0];
@@ -90,9 +90,14 @@ namespace GXIssueTrackingBot.Util
 			return FormDialog.FromForm(SearchCommand.MakeForm);
 		}
 
-		internal static IFormDialog<ListCommand> MakeListRoot()
+		internal static IDialog<ListCommand> MakeListRoot()
 		{
-			return FormDialog.FromForm(ListCommand.MakeForm);
+			return Chain.From(() => FormDialog.FromForm(ListCommand.MakeForm).Do(async (context, list) =>
+			{
+				var completed = await list;
+				await context.PostAsync("...");
+			}
+			));
 		}
 	}
 }

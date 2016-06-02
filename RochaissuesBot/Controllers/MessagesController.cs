@@ -1,15 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
-using Microsoft.Bot.Connector;
-using Microsoft.Bot.Connector.Utilities;
-using Newtonsoft.Json;
-using GXIssueTrackingBot.Util;
 using GXIssueTrackingBot.Intents.Command;
+using GXIssueTrackingBot.Util;
+using Microsoft.Bot.Connector;
 
 namespace GXIssueTrackingBot
 {

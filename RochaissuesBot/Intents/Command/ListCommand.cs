@@ -28,19 +28,20 @@ namespace GXIssueTrackingBot.Intents.Command
 			{
 				context.UserData.SetValue<bool>(KEY, false);
 				await context.PostAsync(IssuesDP.Query(list.User == "none" ? "" : list.User, list.Project == "none" ? "" : list.Project, list.Status == "none" ? "" : list.Project, list.Category == "none" ? "" : list.Category, list.Type == "none" ? "" : list.Type));
-				
 			};
 
 			FormBuilder<ListCommand> form = new FormBuilder<ListCommand>();
 
 			return form
 				.Message("I'll ask Genexus Issue Tracking system for issues matching your criteria")
-				.AddRemainingFields()
+				.Field(nameof(Project))
+				.Field(nameof(User))
+				.Field(nameof(Status))
+				.Field(nameof(Type))
+				.Field(nameof(Category))
 				.Message("Thanks, I'll go ask Genexus issues now...")
 				.OnCompletionAsync(goSearch)
 				.Build();
 		}
-
-
 	}
 }
