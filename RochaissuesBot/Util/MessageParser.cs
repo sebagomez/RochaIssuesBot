@@ -85,19 +85,14 @@ namespace GXIssueTrackingBot.Util
 			return intent.Execute(message);
 		}
 
-		internal static IFormDialog<SearchCommand> MakeSearchRoot()
+		internal static IDialog<SearchCommand> MakeSearchRoot()
 		{
-			return FormDialog.FromForm(SearchCommand.MakeForm);
+			return Chain.From(() => FormDialog.FromForm(SearchCommand.MakeForm));
 		}
 
 		internal static IDialog<ListCommand> MakeListRoot()
 		{
-			return Chain.From(() => FormDialog.FromForm(ListCommand.MakeForm).Do(async (context, list) =>
-			{
-				var completed = await list;
-				await context.PostAsync("...");
-			}
-			));
+			return Chain.From(() => FormDialog.FromForm(ListCommand.MakeForm));
 		}
 	}
 }

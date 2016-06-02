@@ -27,7 +27,7 @@ namespace GXIssueTrackingBot.Intents.Command
 			OnCompletionAsyncDelegate<ListCommand> goSearch = async (context, list) =>
 			{
 				context.UserData.SetValue<bool>(KEY, false);
-				await context.PostAsync(IssuesDP.Query(list.User == "none" ? "" : list.User, list.Project == "none" ? "" : list.Project, list.Status == "none" ? "" : list.Project, list.Category == "none" ? "" : list.Category, list.Type == "none" ? "" : list.Type));
+				await context.PostAsync(IssuesDP.Query(list.User == "none" ? "" : list.User, list.Project == "none" ? "" : list.Project, list.Status == "none" ? "" : list.Status, list.Category == "none" ? "" : list.Category, list.Type == "none" ? "" : list.Type));
 			};
 
 			FormBuilder<ListCommand> form = new FormBuilder<ListCommand>();
