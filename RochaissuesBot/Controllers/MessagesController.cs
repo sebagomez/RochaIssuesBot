@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 using GXIssueTrackingBot.Intents.Command;
 using GXIssueTrackingBot.Util;
@@ -21,9 +22,12 @@ namespace GXIssueTrackingBot
 				int length = (message.Text ?? string.Empty).Length;
 
 				// return our reply to the user
-				if (message.Text.ToLower().Trim() == "hello")
-					return message.CreateReplyMessage($"Hello to you too {message.From.Name}! What's up!");
-
+				string[] greetings = { "hello", "hi" };
+				if (greetings.Contains(message.Text.ToLower().Trim()))
+				{
+					string name = message.From.ChannelId == "facebook" ? "facebook user" : message.From.Name;
+					return message.CreateReplyMessage($"Not many people says hi to me, {message.Text.ToLower()} to you too {name}!");
+				}
 				return await MessageParser.Parse(message);
 			}
 			else
