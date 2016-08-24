@@ -8,9 +8,9 @@ namespace GXIssueTrackingBot.LUIS
 {
 	public class LuisManager
 	{
-		public static LuisResponse Parse(Message message)
+		public static LuisResponse Parse(Activity activity)
 		{
-			string url = $"https://api.projectoxford.ai/luis/v1/application?id={BotConfiguration.LUIS_KEY}&subscription-key={BotConfiguration.LUIS_SUBSCRIPTION}&q={message.Text}";
+			string url = $"https://api.projectoxford.ai/luis/v1/application?id={BotConfiguration.LUIS_KEY}&subscription-key={BotConfiguration.LUIS_SUBSCRIPTION}&q={activity.Text}";
 			WebClient wc = new WebClient();
 			Stream response = wc.OpenRead(url);
 			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(LuisResponse));

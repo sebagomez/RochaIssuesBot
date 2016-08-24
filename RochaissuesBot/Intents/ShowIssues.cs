@@ -39,22 +39,25 @@ namespace GXIssueTrackingBot.Intents
 			}
 		}
 
-		public override Message Execute(Message message)
+		public override Activity Execute(Activity activity)
 		{
-			Message msg = GetReplyMessage(message);
+			Activity msg = GetReplyMessage(activity);
 			msg.Text = IssuesDP.Query(User, Project, Status, Category, Type);
 
 			return msg;
 		}
 
-		Message GetReplyMessage(Message message)
+		Activity GetReplyMessage(Activity activity)
 		{
-			Message msg = message.CreateReplyMessage();
-			string user = message.GetBotUserData<string>(USER_CODE);
-			string project = message.GetBotUserData<string>(PROJECT_CODE);
-			string status = message.GetBotUserData<string>(STATUS);
-			string type = message.GetBotUserData<string>(TYPE);
-			string category = message.GetBotUserData<string>(CATEGORY);
+			StateClient state = activity.GetStateClient();
+			BotData data = state.BotState.GetUserData(activity.ChannelId, activity.From.Id);
+
+			Activity msg = activity.CreateReply();
+			string user = data.GetProperty<string>(USER_CODE);
+			string project = data.GetProperty<string>(PROJECT_CODE);
+			string status = data.GetProperty<string>(STATUS);
+			string type = data.GetProperty<string>(TYPE);
+			string category = data.GetProperty<string>(CATEGORY);
 
 			if (IsSingleParameter)
 			{
@@ -70,11 +73,13 @@ namespace GXIssueTrackingBot.Intents
 					Category = category;
 			}
 
-			msg.SetBotUserData(USER_CODE, User);
-			msg.SetBotUserData(PROJECT_CODE, Project);
-			msg.SetBotUserData(STATUS, Status);
-			msg.SetBotUserData(TYPE, Type);
-			msg.SetBotUserData(CATEGORY, Category);
+			data.SetProperty<string>(USER_CODE, User ?? "");
+			data.SetProperty<string>(PROJECT_CODE, Project ?? "");
+			data.SetProperty<string>(STATUS, Status ?? "");
+			data.SetProperty<string>(TYPE, Type ?? "");
+			data.SetProperty<string>(CATEGORY, Category ?? "");
+
+			state.BotState.SetUserData(activity.ChannelId, activity.From.Id, data);
 
 			return msg;
 		}

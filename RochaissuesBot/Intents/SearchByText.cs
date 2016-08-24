@@ -5,9 +5,9 @@ namespace GXIssueTrackingBot.Intents
 {
 	public class SearchByText : BaseIntent
 	{
-		public override Message Execute(Message message)
+		public override Activity Execute(Activity activity)
 		{
-			return message.CreateReplyMessage(IssuesByText.Search(message.Text));
+			return activity.CreateReply(IssuesByText.Search(activity.Text));
 		}
 	}
 }

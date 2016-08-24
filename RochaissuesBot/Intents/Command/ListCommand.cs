@@ -40,7 +40,7 @@ namespace GXIssueTrackingBot.Intents.Command
 				.Field(nameof(Type))
 				.Field(nameof(Category))
 				.Message("Thanks, I'll go ask Genexus issues now...")
-				.OnCompletionAsync(goSearch)
+				.OnCompletion(goSearch)
 				.Build();
 		}
 	}

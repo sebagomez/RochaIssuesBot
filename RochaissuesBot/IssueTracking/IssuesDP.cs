@@ -51,7 +51,7 @@ namespace GXIssueTrackingBot.IssueTracking
 			IssuesSDT sdt = ser.ReadObject(response) as IssuesSDT;
 
 			StringBuilder builder = new StringBuilder();
-			string queryString = SearchedText(status, type, project, user, category);
+			string queryString = SearchedText(status, type, project, user, category, sdt.Issues.Count);
 
 			if (sdt.Error)
 			{
@@ -79,13 +79,14 @@ namespace GXIssueTrackingBot.IssueTracking
 			return builder.ToString();
 		}
 
-		static string SearchedText(string status, string type, string project, string user, string category)
+		static string SearchedText(string status, string type, string project, string user, string category, int count)
 		{
 			StringBuilder builder = new StringBuilder();
 			if (!string.IsNullOrEmpty(status))
 				builder.Append($"{status} ");
 
-			builder.Append("issues ");
+			builder.Append(count == 1 ? "issue " : "issues ");
+			//builder.Append("issues ");
 
 			if (!string.IsNullOrEmpty(type))
 				builder.Append($"({type})");

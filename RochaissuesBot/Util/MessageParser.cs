@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using GXIssueTrackingBot.Intents;
 using GXIssueTrackingBot.Intents.Command;
 using GXIssueTrackingBot.LUIS;
@@ -11,28 +12,40 @@ namespace GXIssueTrackingBot.Util
 	public class MessageParser
 	{
 		//https://channel9.msdn.com/Events/Build/2016/B821
-		public static async Task<Message> Parse(Message message)
+		public static async Task<Activity> Parse(Activity activity)
 		{
-			if (message.Text.ToLower().Trim() == "/help")
+			if (activity.Text.ToLower().Trim() == "/help")
 			{
 				HelpCommand help = new HelpCommand();
-				return help.Execute(message);
+				return help.Execute(activity);
 			}
-			if (message.Text.ToLower().Trim() == "/clear")
+			if (activity.Text.ToLower().Trim() == "/clear")
 			{
 				ClearCommand clr = new ClearCommand();
-				return clr.Execute(message);
+				return clr.Execute(activity);
 			}
 
-			if (message.GetBotUserData<bool>(SearchCommand.KEY))
-				return await Conversation.SendAsync(message, MakeSearchRoot);
+			ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+			StateClient state = activity.GetStateClient();
+			BotData data = state.BotState.GetUserData(activity.ChannelId, activity.From.Id);
 
-			if (message.GetBotUserData<bool>(ListCommand.KEY))
-				return await Conversation.SendAsync(message, MakeListRoot);
+			if (data.GetProperty<bool>(SearchCommand.KEY))
+			{
+				await Conversation.SendAsync(activity, MakeSearchRoot);
+				return null;
+			}
+			if (data.GetProperty<bool>(ListCommand.KEY))
+			{
+				await Conversation.SendAsync(activity, MakeListRoot);
+				return null;
+			}
 
-			string messageText = message.Text.Trim();
+			string messageText = activity.Text.Trim();
 			if (messageText.StartsWith(":") && messageText.EndsWith(":") && messageText.IndexOf(' ') == -1) //it's an emoji
-				return message.CreateReplyMessage($"{messageText} to you too {message.From.Name}");
+			{
+				await connector.Conversations.ReplyToActivityAsync(activity.CreateReply($"{messageText} to you too {activity.From.Name}"));
+				return null;
+			}
 
 			BaseIntent intent = null;
 			if (messageText.StartsWith("/")) // it's a command
@@ -48,22 +61,28 @@ namespace GXIssueTrackingBot.Util
 						break;
 					case "list":
 					case "show":
-						message.SetBotUserData(ListCommand.KEY, true);
-						return await Conversation.SendAsync(message, MakeListRoot);
+						data.SetProperty<bool>(ListCommand.KEY, true);
+						state.BotState.SetUserData(activity.ChannelId, activity.From.Id, data);
+						await Conversation.SendAsync(activity, MakeListRoot);
+						break;
 					case "search":
 					case "find":
-						message.SetBotUserData(SearchCommand.KEY, true);
-						return await Conversation.SendAsync(message, MakeSearchRoot);
+						data.SetProperty<bool>(SearchCommand.KEY, true);
+						state.BotState.SetUserData(activity.ChannelId, activity.From.Id, data);
+						await Conversation.SendAsync(activity, MakeSearchRoot);
+						break;
 					default:
 						break;
 				}
 
 				if (intent != null)
-					return intent.Execute(message);
+					return intent.Execute(activity);
+				else
+					return null;
 			}
 
 			//I need to use natural language recognition here with LUIS.ai
-			LuisResponse luis = LuisManager.Parse(message);
+			LuisResponse luis = LuisManager.Parse(activity);
 			Intent luisIntent = luis.intents[0];
 
 			switch (luisIntent.intent)
@@ -82,7 +101,7 @@ namespace GXIssueTrackingBot.Util
 					break;
 			}
 
-			return intent.Execute(message);
+			return intent.Execute(activity);
 		}
 
 		internal static IDialog<SearchCommand> MakeSearchRoot()

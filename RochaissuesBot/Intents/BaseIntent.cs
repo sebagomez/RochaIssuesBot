@@ -10,9 +10,9 @@ namespace GXIssueTrackingBot.Intents
 		public const string TYPE = "Type";
 		public const string CATEGORY = "Category";
 
-		public virtual Message Execute(Message message)
+		public virtual Activity Execute(Activity activity)
 		{
-			return message.CreateReplyMessage($"Sorry {message.From.Name} :(, don't know what '{message.Text}' means (yet)");
+			return activity.CreateReply($"Sorry {activity.From.Name} :(, don't know what '{activity.Text}' means (yet)");
 		}
 	}
 }

@@ -6,10 +6,10 @@ namespace GXIssueTrackingBot.Intents
 {
 	public class Soup : BaseIntent
 	{
-		public override Message Execute(Message message)
+		public override Activity Execute(Activity activity)
 		{
-			Message msg = message.CreateReplyMessage();
-			msg.Text = $"**NO SOUP FOR YOU!** {message.From.Name}"; // Text property is Markdown!
+			Activity msg = activity.CreateReply();
+			msg.Text = $"**NO SOUP FOR YOU!** {activity.From.Name}"; // Text property is Markdown!
 			Attachment att = new Attachment();
 			att.ContentType = "image/png";
 			att.ContentUrl = BotConfiguration.SOUP_NAZI; // "http://fsartech/Goomez/images/soup_nazi.jpg";

@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using GXIssueTrackingBot.Intents.Command;
@@ -14,58 +17,58 @@ namespace GXIssueTrackingBot
 		/// POST: api/Messages
 		/// Receive a message from a user and reply to it
 		/// </summary>
-		public async Task<Message> Post([FromBody]Message message)
+		public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
 		{
-			if (message.Type == "Message")
+			ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+			if (activity.GetActivityType() == ActivityTypes.Message)
 			{
 				// calculate something for us to return
-				int length = (message.Text ?? string.Empty).Length;
+				int length = (activity.Text ?? string.Empty).Length;
 
 				// return our reply to the user
 				string[] greetings = { "hello", "hi" };
-				if (greetings.Contains(message.Text.ToLower().Trim()))
+				if (greetings.Contains(activity.Text.ToLower().Trim()))
 				{
-					string name = message.From.ChannelId == "facebook" ? "facebook user" : message.From.Name;
-					return message.CreateReplyMessage($"Not many people says hi to me, {message.Text.ToLower()} to you too {name}!");
+					string name = activity.From.Id == "facebook" ? "facebook user" : activity.From.Name;
+					await connector.Conversations.ReplyToActivityAsync(activity.CreateReply($"Not many people says hi to me, {activity.Text.ToLower()} to you too {name}!"));
 				}
-				return await MessageParser.Parse(message);
+				else
+				{
+					Activity reply = await MessageParser.Parse(activity);
+					if (reply != null)
+						await connector.Conversations.ReplyToActivityAsync(reply);
+				}
 			}
 			else
 			{
-				return HandleSystemMessage(message);
+				Activity reply = HandleSystemMessage(activity);
+				if (reply != null)
+					await connector.Conversations.ReplyToActivityAsync(reply);
 			}
+			return Request.CreateResponse(HttpStatusCode.OK);
+
 		}
 
-		private Message HandleSystemMessage(Message message)
+		private Activity HandleSystemMessage(Activity activity)
 		{
-			Message reply = null;
-			if (message.Type == "Ping")
+			Activity reply = null;
+			switch (activity.GetActivityType())
 			{
-				reply = message.CreateReplyMessage();
-				reply.Type = "Ping";
-			}
-			else if (message.Type == "DeleteUserData")
-			{
-				// Implement user deletion here
-				// If we handle user deletion, return a real message
-			}
-			else if (message.Type == "BotAddedToConversation")
-			{
-				HelpCommand cmd = new HelpCommand();
-				return cmd.Execute(message);
-				
-			}
-			else if (message.Type == "BotRemovedFromConversation")
-			{
-			}
-			else if (message.Type == "UserAddedToConversation")
-			{
-			}
-			else if (message.Type == "UserRemovedFromConversation")
-			{
-			}
-			else if (message.Type == "EndOfConversation")
-			{
+				case ActivityTypes.Ping:
+					reply = activity.CreateReply();
+					reply.Type = ActivityTypes.Ping;
+					reply.Text = "Haga Pum!";
+					return reply;
+				case ActivityTypes.Typing:
+					reply = activity.CreateReply();
+					reply.Type = ActivityTypes.Typing;
+					reply.Text = "Answer me already...";
+					return reply;
+				case ActivityTypes.ContactRelationUpdate:
+				case ActivityTypes.ConversationUpdate:
+				case ActivityTypes.DeleteUserData:
+				default:
+					break;
 			}
 
 			return reply;

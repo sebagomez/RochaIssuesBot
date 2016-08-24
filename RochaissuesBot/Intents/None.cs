@@ -4,9 +4,9 @@ namespace GXIssueTrackingBot.Intents
 {
 	public class None : BaseIntent
 	{
-		public override Message Execute(Message msg)
+		public override Activity Execute(Activity activity)
 		{
-			return base.Execute(msg);
+			return base.Execute(activity);
 		}
 	}
 }

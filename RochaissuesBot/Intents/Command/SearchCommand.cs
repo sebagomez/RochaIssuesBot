@@ -28,7 +28,7 @@ namespace GXIssueTrackingBot.Intents.Command
 				.Message("I'll be looking for an issue title in full text search...")
 				.AddRemainingFields()
 				.Message("Thanks, I'll go ask Genexus issues now...")
-				.OnCompletionAsync(goSearch)
+				.OnCompletion(goSearch)
 				.Build();
 		}
 
